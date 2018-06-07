@@ -58,7 +58,7 @@ connection = pymysql.connect(host=mysql_info['host'],
                             db=mysql_info['db'],
                             cursorclass=pymysql.cursors.DictCursor)
 
-
+#smokesessionid needs to be changed manuall for now.
 Smoke_Session_ID=11
 desired_temp = 280
 kp = .5*1/25
@@ -69,6 +69,12 @@ kd = .5*20
 #(z['Date_Time'].diff().dt.seconds)*(260-z['curr_temp'])
 
 while True:
+    #temperature control will be achieve with PID controller logic.
+    #The fan strength will be detirmined by the error between the smoker temperature and
+    #the desired temperature.
+    # The error itself (proportional control), the intergral of the error (intergral control)
+    # and the derivative of the error (derivative controll) will be used
+    
     #Date_Time, Temp0 as smoker_temp
     temp_data = read_data(Smoke_Session_ID)
     temp_data = temp_data.tail(30)

@@ -33,6 +33,7 @@ def get_resistance(temp_percent, r=46000):
     return r*temp_percent/(1-temp_percent)
 
 
+#Steinhart–Hart equation converts resistance to temperature
 def get_temp(R):
     A = 0.6872188391*10**-3
     B = 2.103627383*10**-4
@@ -44,7 +45,7 @@ def get_temp(R):
 
 
 
-
+#the frist value is smokesessionid and needs to be changed manually
 def write_data(temp):
  #   temp[temp is np.nan] = 'null'
     try:
