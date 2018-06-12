@@ -22,3 +22,8 @@ This script can be run on a different computer. It the smoker or meat temperatur
 
 
 smoke_session_id needs to be changed manually in each script if you want to distinguish different cooking sessions.
+
+Things to work on:
+  check that the duty cycle is between 0 and 1 before applying.
+  
+  consider an average for the integration portion over time to avoid longer time periods artificially raising the integration     component.
