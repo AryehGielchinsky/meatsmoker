@@ -52,7 +52,7 @@ def write_data(temp):
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
         sql = """insert into recorded_data (Smoke_Session_Id, Date_Time, Temp0, Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7)
-                  values (13, '{}', {}, {}, {}, {}, {}, {}, {}, {})""".format(local_time, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7])
+                  values (19, '{}', {}, {}, {}, {}, {}, {}, {}, {})""".format(local_time, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7])
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.
         connection.commit()
