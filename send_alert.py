@@ -17,7 +17,8 @@ import time
 
 
 
-def get_data(connection):
+def get_data():
+    connection = get_connection()
     with connection.cursor() as cursor:
         sql = """
             select 
@@ -25,7 +26,7 @@ def get_data(connection):
                 Temp0,
                 Temp1
             from recorded_data 
-            where Smoke_Session_Id = 11
+            where Smoke_Session_Id = 18
             """
         cursor.execute(sql)
         result = pd.DataFrame(cursor.fetchall())
@@ -60,12 +61,13 @@ def check_limits(x):
     T0 = x.tail(5).mean().Temp0
     T1 = x.tail(5).mean().Temp1
     
-    if T0 > 270:
-        vibrate_phone('T0 = {} > 270'.format(T0))
-    elif T0 < 240:
-        vibrate_phone('T0 = {} < 240'.format(T0))
-    elif T1 > 197:
-        vibrate_phone('T1 = {} > 197'.format(T1))
+    if T1 > 164:
+        vibrate_phone('Meat Temp = {} !!'.format(T1))  
+#    elif T0 > 260:
+#        vibrate_phone('Smoker Temp = {} !!'.format(T0))
+#    elif T0 < 240:
+#        vibrate_phone('Smoker Temp = {} !!'.format(T0))
+
 
 
 #if the meat temperature slows down (The Stall) you can wrap it in tin foil to speed it up.
@@ -79,6 +81,16 @@ def check_stall():
 
 
 
+def get_connection():
+    connection = pymysql.connect(host=mysql_info['host'],
+                            user=mysql_info['user'],
+                            password=mysql_info['password'],
+                            db=mysql_info['db'],
+                            cursorclass=pymysql.cursors.DictCursor)
+    return connection
+
+
+
 
 #get DB and automate app info
 import os
@@ -88,18 +100,19 @@ with open(os.path.expanduser('~/passwords/meat_smoker_mysql_info.txt')) as f:
        (key, val) = line.split()
        mysql_info[key] = val
 
-# Connect to the database
-connection = pymysql.connect(host=mysql_info['host'],
-                            user=mysql_info['user'],
-                            password=mysql_info['password'],
-                            db=mysql_info['db'],
-                            cursorclass=pymysql.cursors.DictCursor)
+     
+
 
 
 stalled = 1
 print('automate_cloud started')
+
+
+vibrate_phone('Connection to phone is working')
+
 while True:
-    x = get_data(connection = connection)
+    
+    x = get_data()
     #x.Temp1[x.Temp1 >210] = np.nan
     #x.Temp0[x.Temp1 >275] = np.nan
     
@@ -109,7 +122,8 @@ while True:
         check_stall()
     
     #print(x.tail(15))
-    time.sleep(30)
+    time.sleep(10)
+    print('end of loop')
 
 
 
