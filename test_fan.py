@@ -10,8 +10,8 @@ fan = pwm(pin = 4, initial_value = 0, frequency = 25000, pin_factory = factory)
 
 
 while True:
-    fan.value=1
-    sleep(300)
     fan.value=0
-    sleep(300)
+#    sleep(300)
+#    fan.value=0
+#    sleep(300)
 #fan.close()
