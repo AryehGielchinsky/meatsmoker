@@ -17,13 +17,14 @@ monitor smoker:
 This script can be run on a different computer. It can be used for keeping an eye on the smoker and debug the PID controller.
 
 send alert:
-This script can be run on a different computer. It the smoker or meat temperature goes out of predefined temperature bands it will snd an alert to the users phone. The alert is received with an app called Automate.
+This script can be run on a different computer. If the smoker or meat temperature goes out of predefined temperature bands it will send an alert to the users phone. The alert is received with an app called Automate.
 
 
 
-smoke_session_id needs to be changed manually in each script if you want to distinguish different cooking sessions.
 
 Things to work on:
   check that the duty cycle is between 0 and 1 before applying. np.clip
+  
+  smoke_session_id needs to be changed manually in each script if you want to distinguish different cooking sessions. automte   this
   
   consider an average for the integration portion over time to avoid longer time periods artificially raising the integration     component.
