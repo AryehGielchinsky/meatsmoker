@@ -55,17 +55,17 @@ def read_data(Smoke_Session_ID, read_type = 'PWM'):
         
         
 
-Smoke_Session_ID = 18
-hours_ago = 100
-start_time = '2018-06-14 19:46:00'
+Smoke_Session_ID = 20
+hours_ago = 100000
+start_time = '2018-06-28 12:00:00'
 
 for i in range(20):
     print('')
 
 
 smoker_temps_data=pd.DataFrame( read_data(Smoke_Session_ID, 'smoker_temps') )
-smoker_temps_data=smoker_temps_data[smoker_temps_data['Date_Time']
-        > (datetime.now() - timedelta(hours=hours_ago))]
+#smoker_temps_data=smoker_temps_data[smoker_temps_data['Date_Time']
+#        > (datetime.now() - timedelta(hours=hours_ago))]
 smoker_temps_data=smoker_temps_data[smoker_temps_data['Date_Time']> start_time]
 
 #smoker_temps_data=smoker_temps_data[smoker_temps_data['Date_Time'] > '2018-06-04 19:46:00']
@@ -86,7 +86,8 @@ PWM_data=PWM_data[PWM_data['Date_Time']> start_time]
 plt.figure(figsize=(14, 14))
 plt.subplot(411)
 plt.plot(smoker_temps_data['Date_Time'], smoker_temps_data['Temp0'], label='smoker')
-plt.plot(smoker_temps_data['Date_Time'], smoker_temps_data['Temp1'], '.', label='meat')
+plt.plot(smoker_temps_data['Date_Time'], smoker_temps_data['Temp1'], '.', label='meat1')
+plt.plot(smoker_temps_data['Date_Time'], smoker_temps_data['Temp2'], '.', label='meat2')
 plt.grid()  
 plt.legend(loc = 'upper left')
 plt.xlabel('Time')
@@ -122,7 +123,7 @@ plt.grid()
 plt.xlabel('Time')
 plt.ylabel('Fan actual duty cycle')
 
-print(smoker_temps_data['Temp1'].tail(5))
+print(smoker_temps_data[['Temp0', 'Temp1', 'Temp2']].tail(5) )
 
 #print( (-z['curr_temp'].diff()/z['Date_Time'].diff().dt.seconds).mean() )
 #print( ((z['Date_Time'].diff().dt.seconds)*(260-z['curr_temp'])).sum() )

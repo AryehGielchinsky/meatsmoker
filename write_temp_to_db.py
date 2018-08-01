@@ -12,16 +12,16 @@ import numpy as np
 
 
 def get_adc_value():
-    for pos in range(0,8):
+    for pos in range(0,4):
         if pos not in adcs:
             adcs[pos] = MCP3008(pos)
-    vals = np.array([adcs[pos].value for pos in range(0,8)])
+    vals = np.array([adcs[pos].value for pos in range(0,4)])
     vals[vals > .985] = None
     return vals
 
 
 def get_temp_percent():
-    x = np.zeros((8,5))
+    x = np.zeros((4,5))
     for i in range(0, 5):
         x[:,i] = get_adc_value()
         time.sleep(.2)
@@ -51,8 +51,8 @@ def write_data(temp):
     try:
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into recorded_data (Smoke_Session_Id, Date_Time, Temp0, Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7)
-                  values (20, '{}', {}, {}, {}, {}, {}, {}, {}, {})""".format(local_time, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7])
+        sql = """insert into recorded_data (Smoke_Session_Id, Date_Time, Temp0, Temp1, Temp2, Temp3)
+                  values (20, '{}', {}, {}, {}, {} )""".format(local_time, temp[0], temp[1], temp[2], temp[3] )
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.
         connection.commit()

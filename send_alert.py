@@ -24,9 +24,10 @@ def get_data():
             select 
                 Date_Time as DT,
                 Temp0,
-                Temp1
+                Temp1,
+                Temp2
             from recorded_data 
-            where Smoke_Session_Id = 18
+            where Smoke_Session_Id = 20
             """
         cursor.execute(sql)
         result = pd.DataFrame(cursor.fetchall())
@@ -60,11 +61,14 @@ def vibrate_phone(msg):
 def check_limits(x):
     T0 = x.tail(5).mean().Temp0
     T1 = x.tail(5).mean().Temp1
+    T2 = x.tail(5).mean().Temp2
     
-    if T1 > 164:
-        vibrate_phone('Meat Temp = {} !!'.format(T1))  
-#    elif T0 > 260:
-#        vibrate_phone('Smoker Temp = {} !!'.format(T0))
+    if T1 > 195:
+        vibrate_phone('Meat Temp = {} !!'.format(T1)) 
+    elif T2 > 195:
+        vibrate_phone('Meat Temp = {} !!'.format(T1)) 
+    elif T0 > 275:
+        vibrate_phone('Smoker Temp = {} !!'.format(T0))
 #    elif T0 < 240:
 #        vibrate_phone('Smoker Temp = {} !!'.format(T0))
 
