@@ -22,12 +22,12 @@ def get_data():
     with connection.cursor() as cursor:
         sql = """
             select 
-                Date_Time as DT,
-                Temp0,
-                Temp1,
-                Temp2
+                date_time as dt,
+                temp0,
+                temp1,
+                temp2
             from recorded_data 
-            where Smoke_Session_Id = 1
+            where smoke_session_id = 1
             """
         cursor.execute(sql)
         result = pd.DataFrame(cursor.fetchall())
@@ -39,10 +39,10 @@ def print_data(result):
     plt.figure(figsize=(15,15))
     plt.subplot(211)
     plt.grid()
-    plt.plot(result['DT'], result['Temp0'])
+    plt.plot(result['dt'], result['temp0'])
     plt.subplot(212)
     plt.grid()
-    plt.plot(result['DT'], result['Temp1'])
+    plt.plot(result['dt'], result['temp1'])
     plt.ylim(ymax=260)
     plt.show()
     
@@ -59,9 +59,9 @@ def vibrate_phone(msg):
 
 
 def check_limits(x):
-    T0 = x.tail(5).mean().Temp0
-    T1 = x.tail(5).mean().Temp1
-    T2 = x.tail(5).mean().Temp2
+    T0 = x.tail(5).mean().temp0
+    T1 = x.tail(5).mean().temp1
+    T2 = x.tail(5).mean().temp2
     
     if T1 > 195:
         vibrate_phone('Meat Temp = {} !!'.format(T1)) 
@@ -77,7 +77,7 @@ def check_limits(x):
 #if the meat temperature slows down (The Stall) you can wrap it in tin foil to speed it up.
 #I started adding support for stall detection, but I think the meat tastes better if you leave it alone
 def check_stall():
-    diff = x.tail(1).head(1).Temp1.values-x.tail(85).head(1).Temp1.values
+    diff = x.tail(1).head(1).temp1.values-x.tail(85).head(1).temp1.values
     #about half an hour of change
     if diff < 1.5:
         stalled = 1

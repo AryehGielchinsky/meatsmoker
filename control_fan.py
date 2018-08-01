@@ -16,7 +16,7 @@ import pandas as pd
 def read_data(Smoke_session_ID):
     try:
         cursor = connection.cursor()
-        sql = """select Date_Time, Temp0 as smoker_temp
+        sql = """select date_time, temp0 as smoker_temp
                 from recorded_data
                 """.format(Smoke_session_ID)
         cursor.execute(sql)
@@ -30,7 +30,7 @@ def write_data(Smoke_Session_ID, curr_temp, desired_temp, duty_cycle_p, duty_cyc
     try:
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into PWM (Smoke_Session_ID, Date_Time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
+        sql = """insert into PWM (smoke_session_id, date_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
                   values ({}, '{}', {}, {}, {}, {}, {}, {})""".format(Smoke_Session_ID, local_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.
@@ -82,11 +82,11 @@ while True:
     #print('curr_temp={}'.format(curr_temp))
     duty_cycle_p = kp*(desired_temp-temp_data['smoker_temp'].tail(1).mean()) 
 
-    duty_cycle_i = ki * ( (temp_data['Date_Time'].diff().dt.seconds)
+    duty_cycle_i = ki * ( (temp_data['date_time'].diff().dt.seconds)
                         *(desired_temp-temp_data['smoker_temp']) ).sum()
 
     duty_cycle_d = (-kd * temp_data['smoker_temp'].diff()
-                    /temp_data['Date_Time'].diff().dt.seconds).mean()
+                    /temp_data['date_time'].diff().dt.seconds).mean()
 
     print('duty_cycle_p={}'.format(duty_cycle_p))
     print('duty_cycle_i={}'.format(duty_cycle_i))
