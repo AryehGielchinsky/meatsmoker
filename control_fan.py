@@ -30,7 +30,7 @@ def write_data(Smoke_Session_ID, curr_temp, desired_temp, duty_cycle_p, duty_cyc
     try:
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into PWM2 (Smoke_Session_ID, Date_Time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
+        sql = """insert into PWM (Smoke_Session_ID, Date_Time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
                   values ({}, '{}', {}, {}, {}, {}, {}, {})""".format(Smoke_Session_ID, local_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.

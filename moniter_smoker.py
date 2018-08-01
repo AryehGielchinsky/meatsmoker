@@ -36,7 +36,7 @@ connection = pymysql.connect(host=mysql_info['host'],
 def read_data(Smoke_Session_ID, read_type = 'PWM'):
     try:
         if read_type == 'PWM':
-            table_name = 'PWM2' 
+            table_name = 'PWM' 
         elif read_type == 'smoker_temps':
             table_name = 'recorded_data' 
         else:
