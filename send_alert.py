@@ -25,7 +25,8 @@ def get_data():
                 date_time as dt,
                 temp0,
                 temp1,
-                temp2
+                temp2,
+                temp3
             from recorded_data 
             where smoke_session_id = 1
             """
@@ -59,14 +60,18 @@ def vibrate_phone(msg):
 
 
 def check_limits(x):
+    x.drop('dt', axis=1, inplace=True)
+    print(x.tail(5).mean())
     T0 = x.tail(5).mean().temp0
     T1 = x.tail(5).mean().temp1
     T2 = x.tail(5).mean().temp2
-    
+    T3 = x.tail(5).mean().temp3
     if T1 > 195:
-        vibrate_phone('Meat Temp = {} !!'.format(T1)) 
+        vibrate_phone('Meat Temp1 = {} !!'.format(T1)) 
     elif T2 > 195:
-        vibrate_phone('Meat Temp = {} !!'.format(T1)) 
+        vibrate_phone('Meat Temp2 = {} !!'.format(T2))
+    elif T3 > 195:
+        vibrate_phone('Meat Temp3 = {} !!'.format(T3))
     elif T0 > 275:
         vibrate_phone('Smoker Temp = {} !!'.format(T0))
 #    elif T0 < 240:
