@@ -55,7 +55,7 @@ def read_data(Smoke_Session_ID, read_type = 'PWM'):
         
         
 
-Smoke_Session_ID = 20
+Smoke_Session_ID = 1
 hours_ago = 100000
 start_time = '2018-06-28 12:00:00'
 

@@ -27,7 +27,7 @@ def get_data():
                 Temp1,
                 Temp2
             from recorded_data 
-            where Smoke_Session_Id = 20
+            where Smoke_Session_Id = 1
             """
         cursor.execute(sql)
         result = pd.DataFrame(cursor.fetchall())

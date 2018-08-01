@@ -59,7 +59,7 @@ connection = pymysql.connect(host=mysql_info['host'],
                             cursorclass=pymysql.cursors.DictCursor)
 
 #smokesessionid needs to be changed manuall for now.
-Smoke_Session_ID=20
+Smoke_Session_ID=1
 desired_temp = 250
 kp = .5*.5*1/25
 ki = .5*2*1/10000
