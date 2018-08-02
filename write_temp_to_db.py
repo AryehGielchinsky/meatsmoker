@@ -7,7 +7,8 @@ from datetime import datetime as dt
 import signal 
 import os
 import numpy as np
-
+from my_functions import get_smoke_session
+from my_functions import get_connection
 
 
 
@@ -60,24 +61,12 @@ def write_data(temp):
         print('write_date {}'.format(inst) )
 
 
-    
 
 adcs = {}
 
-#get DB info
-import os
-mysql_info = {}
-with open(os.path.expanduser('~/passwords/meat_smoker_mysql_info.txt')) as f:
-    for line in f:
-       (key, val) = line.split()
-       mysql_info[key] = val
+connection, login_info = get_connection()
 
-# Connect to the database
-connection = pymysql.connect(host=mysql_info['host'],
-                            user=mysql_info['user'],
-                            password=mysql_info['password'],
-                            db=mysql_info['db'],
-                            cursorclass=pymysql.cursors.DictCursor)
+Smoke_Session_ID = get_smoke_session(connection)
 
 
 while True:

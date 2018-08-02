@@ -1,8 +1,6 @@
-#sudo pigpiod
 from gpiozero import PWMOutputDevice as pwm
 from time import sleep
 import numpy as np
-#import pandas as pd
 from gpiozero.pins.pigpio import PiGPIOFactory
 import time
 import pymysql.cursors
@@ -10,7 +8,8 @@ from datetime import datetime as dt
 import signal 
 import os
 import pandas as pd
-
+from my_functions import get_smoke_session
+from my_functions import get_connection
 
 
 def read_data(Smoke_session_ID):
@@ -43,23 +42,11 @@ factory = PiGPIOFactory()
 fan = pwm(pin = 4, initial_value = 1.0, frequency = 25000, pin_factory = factory)
 
 
-#get DB info
-import os
-mysql_info = {}
-with open(os.path.expanduser('~/passwords/meat_smoker_mysql_info.txt')) as f:
-    for line in f:
-       (key, val) = line.split()
-       mysql_info[key] = val
-
-# Connect to the database
-connection = pymysql.connect(host=mysql_info['host'],
-                            user=mysql_info['user'],
-                            password=mysql_info['password'],
-                            db=mysql_info['db'],
-                            cursorclass=pymysql.cursors.DictCursor)
+#connection to MySQL db
+connection, login_info = get_connection()
 
 #smokesessionid needs to be changed manuall for now.
-Smoke_Session_ID=1
+Smoke_Session_ID = get_smoke_session(connection)
 desired_temp = 250
 kp = .5*.5*1/25
 ki = .5*2*1/10000

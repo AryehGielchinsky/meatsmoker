@@ -13,12 +13,13 @@ import pymysql.cursors
 import requests
 from datetime import datetime
 import time
-
+from my_functions import get_smoke_session
+from my_functions import get_connection
 
 
 
 def get_data():
-    connection = get_connection()
+    connection, login_info = get_connection()
     with connection.cursor() as cursor:
         sql = """
             select 
@@ -35,24 +36,14 @@ def get_data():
         connection.close()
     return result
 
-
-def print_data(result):
-    plt.figure(figsize=(15,15))
-    plt.subplot(211)
-    plt.grid()
-    plt.plot(result['dt'], result['temp0'])
-    plt.subplot(212)
-    plt.grid()
-    plt.plot(result['dt'], result['temp1'])
-    plt.ylim(ymax=260)
-    plt.show()
-    
+   
 
 #this sends a message to an app called automate. you can customize the reponse in the app
 def vibrate_phone(msg):
+    connection, login_info = get_connection()
     stuff = {
-        "secret": mysql_info['secret'],
-        "to": mysql_info['to'],
+        "secret": login_info['secret'],
+        "to": login_info['to'],
         "device": None,
         "payload": msg
         }
@@ -61,21 +52,19 @@ def vibrate_phone(msg):
 
 def check_limits(x):
     x.drop('dt', axis=1, inplace=True)
-    print(x.tail(5).mean())
     T0 = x.tail(5).mean().temp0
     T1 = x.tail(5).mean().temp1
     T2 = x.tail(5).mean().temp2
     T3 = x.tail(5).mean().temp3
-    if T1 > 195:
+    if (T0 > 275 or T0<225):
+        vibrate_phone('Smoker Temp = {} !!'.format(T0))
+    elif T1 > 195:
         vibrate_phone('Meat Temp1 = {} !!'.format(T1)) 
     elif T2 > 195:
         vibrate_phone('Meat Temp2 = {} !!'.format(T2))
     elif T3 > 195:
         vibrate_phone('Meat Temp3 = {} !!'.format(T3))
-    elif T0 > 275:
-        vibrate_phone('Smoker Temp = {} !!'.format(T0))
-#    elif T0 < 240:
-#        vibrate_phone('Smoker Temp = {} !!'.format(T0))
+     
 
 
 
@@ -90,29 +79,6 @@ def check_stall():
 
 
 
-def get_connection():
-    connection = pymysql.connect(host=mysql_info['host'],
-                            user=mysql_info['user'],
-                            password=mysql_info['password'],
-                            db=mysql_info['db'],
-                            cursorclass=pymysql.cursors.DictCursor)
-    return connection
-
-
-
-
-#get DB and automate app info
-import os
-mysql_info = {}
-with open(os.path.expanduser('~/passwords/meat_smoker_mysql_info.txt')) as f:
-    for line in f:
-       (key, val) = line.split()
-       mysql_info[key] = val
-
-     
-
-
-
 stalled = 1
 print('automate_cloud started')
 
@@ -122,10 +88,7 @@ vibrate_phone('Connection to phone is working')
 while True:
     
     x = get_data()
-    #x.Temp1[x.Temp1 >210] = np.nan
-    #x.Temp0[x.Temp1 >275] = np.nan
     
-    #print_data(x)
     check_limits(x)
     if stalled == 0:
         check_stall()
