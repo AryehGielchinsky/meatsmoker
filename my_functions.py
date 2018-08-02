@@ -9,7 +9,7 @@ Created on Thu Aug  2 14:51:30 2018
 import pymysql.cursors
 import os
 
-
+ 
 def get_smoke_session(connection):
     try:
         cursor = connection.cursor()
