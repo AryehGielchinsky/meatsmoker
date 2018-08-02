@@ -29,8 +29,8 @@ def get_data():
                 temp2,
                 temp3
             from recorded_data 
-            where smoke_session_id = 1
-            """
+            where smoke_session_id = {}
+            """.format(Smoke_Session_ID)
         cursor.execute(sql)
         result = pd.DataFrame(cursor.fetchall())
         connection.close()
@@ -84,6 +84,10 @@ print('automate_cloud started')
 
 
 vibrate_phone('Connection to phone is working')
+
+connection, login_info = get_connection()
+
+Smoke_Session_ID = get_smoke_session(connection)
 
 while True:
     
