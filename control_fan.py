@@ -49,7 +49,7 @@ connection, login_info = get_connection()
 Smoke_Session_ID = get_smoke_session(connection)
 desired_temp = 250
 kp = .5*.5*1/25
-ki = .5*2*1/10000
+ki = 2*1/10000
 kd = .5*.5*20
 
 #-z['curr_temp'].diff()/z['Date_Time'].diff().dt.seconds

@@ -45,7 +45,8 @@ connection, login_info = get_connection()
 Smoke_Session_ID = get_smoke_session(connection)
 
 hours_ago = 100000
-start_time = '2018-06-28 12:00:00'
+start_time = '2018-08-03 06:30:00'
+#start_time = '2018-08-02 21:09:00'
 
 for i in range(20):
     print('')
@@ -59,7 +60,8 @@ smoker_temps_data=smoker_temps_data[smoker_temps_data['date_time']> start_time]
 #smoker_temps_data=smoker_temps_data[smoker_temps_data['Date_Time'] > '2018-06-04 19:46:00']
 
 
-PWM_data=pd.DataFrame( read_data(Smoke_Session_ID, 'PWM') )
+
+PWM_data=pd.DataFrame(read_data(Smoke_Session_ID, 'PWM')  )
 PWM_data=PWM_data[PWM_data['date_time']> (datetime.now() - timedelta(hours=hours_ago))]
 PWM_data=PWM_data[PWM_data['date_time']> start_time]
 
