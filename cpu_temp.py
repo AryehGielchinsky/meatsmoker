@@ -20,13 +20,13 @@ import subprocess
 
 
 
-def write_data(temp):
+def write_data(cpu_temp):
  #   temp[temp is np.nan] = 'null'
     try:
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into recorded_data (smoke_session_id, date_time, temp0, temp1, temp2, temp3)
-                  values ({}, '{}', {}, {}, {}, {} )""".format(Smoke_Session_ID, local_time, temp[0], temp[1], temp[2], temp[3] )
+        sql = """insert into recorded_data (smoke_session_id, date_time, cpu_temp)
+                  values ({}, '{}', {} )""".format(Smoke_Session_ID, local_time, cpu_temp )
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.
         connection.commit()
@@ -40,7 +40,9 @@ Smoke_Session_ID = get_smoke_session(connection)
 
 bashCommand = "vcgencmd measure_temp"
 
-process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-output, error = process.communicate()
 
-print(output)
+while True:
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    print(output)
+    write_data(output)
