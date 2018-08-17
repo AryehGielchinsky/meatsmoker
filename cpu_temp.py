@@ -38,6 +38,9 @@ connection, login_info = get_connection()
 Smoke_Session_ID = get_smoke_session(connection)
 
 
-x = subprocess.Popen("vcgencmd", "measure_temp")
+bashCommand = "vcgencmd measure_temp"
 
-print(x)
+process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
+
+print(output)
