@@ -51,18 +51,19 @@ def vibrate_phone(msg):
 
 
 def check_limits(x):
-    x.drop('dt', axis=1, inplace=True)
-    T0 = x.tail(5).mean().temp0
-    T1 = x.tail(5).mean().temp1
-    T2 = x.tail(5).mean().temp2
-    T3 = x.tail(5).mean().temp3
+    y = x.copy()
+    y.drop('dt', axis=1, inplace=True)
+    T0 = y.tail(5).mean().temp0
+    T1 = y.tail(5).mean().temp1
+    T2 = y.tail(5).mean().temp2
+    T3 = y.tail(5).mean().temp3
     if (T0 > 275 or T0<225):
         vibrate_phone('Smoker Temp = {} !!'.format(T0))
-    elif T1 > 195:
+    elif T1 > 200:
         vibrate_phone('Meat Temp1 = {} !!'.format(T1)) 
-    elif T2 > 195:
+    elif T2 > 200:
         vibrate_phone('Meat Temp2 = {} !!'.format(T2))
-    elif T3 > 195:
+    elif T3 > 200:
         vibrate_phone('Meat Temp3 = {} !!'.format(T3))
      
 
@@ -71,15 +72,17 @@ def check_limits(x):
 #if the meat temperature slows down (The Stall) you can wrap it in tin foil to speed it up.
 #I started adding support for stall detection, but I think the meat tastes better if you leave it alone
 def check_stall():
-    diff = x.tail(1).head(1).temp1.values-x.tail(85).head(1).temp1.values
-    #about half an hour of change
-    if diff < 1.5:
+    diff_temp = x.tail(1).head(1).temp1.values-x.tail(100).head(1).temp1.values
+    diff_time = x.tail(1).head(1).dt.iloc[0]-x.tail(100).head(1).dt.iloc[0]
+    diff_time = diff_time.total_seconds()/(60*60) # in hours now
+    temp_per_hour = diff_temp / diff_time
+    if temp_per_hour < 4:
         stalled = 1
-        vibrate_phone('temp diff = {} < 1.5'.format(diff))
+        vibrate_phone('temp_per_hour = {} < 1.5'.format(temp_per_hour))
 
 
 
-stalled = 1
+stalled = 0
 print('automate_cloud started')
 
 
