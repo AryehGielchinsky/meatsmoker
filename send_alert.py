@@ -71,7 +71,7 @@ def check_limits(x):
 
 #if the meat temperature slows down (The Stall) you can wrap it in tin foil to speed it up.
 #I started adding support for stall detection, but I think the meat tastes better if you leave it alone
-def check_stall():
+def check_stall(stalled):
     diff_temp = x.tail(1).head(1).temp1.values-x.tail(100).head(1).temp1.values
     diff_time = x.tail(1).head(1).dt.iloc[0]-x.tail(100).head(1).dt.iloc[0]
     diff_time = diff_time.total_seconds()/(60*60) # in hours now
@@ -80,6 +80,7 @@ def check_stall():
     if temp_per_hour < 4:
         stalled = 1
         vibrate_phone('temp_per_hour = {} < 1.5'.format(temp_per_hour))
+    return stalled
 
 
 
@@ -101,7 +102,7 @@ while True:
     check_limits(x)
     if stalled == 0:
         print('Checking for stall')
-        check_stall()
+        stalled = check_stall(stalled)
     
     #print(x.tail(15))
     time.sleep(10)
