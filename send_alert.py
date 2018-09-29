@@ -96,7 +96,7 @@ while True:
     
     x = get_data()
     
-    print('Checking Limits)
+    print('Checking Limits')
     check_limits(x)
     if stalled == 0:
         print('Checking for stall')
