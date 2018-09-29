@@ -76,6 +76,7 @@ def check_stall():
     diff_time = x.tail(1).head(1).dt.iloc[0]-x.tail(100).head(1).dt.iloc[0]
     diff_time = diff_time.total_seconds()/(60*60) # in hours now
     temp_per_hour = diff_temp / diff_time
+    print(temp_per_hour)
     if temp_per_hour < 4:
         stalled = 1
         vibrate_phone('temp_per_hour = {} < 1.5'.format(temp_per_hour))
@@ -105,6 +106,7 @@ while True:
     #print(x.tail(15))
     time.sleep(10)
     print('end of loop')
+    print('')
 
 
 

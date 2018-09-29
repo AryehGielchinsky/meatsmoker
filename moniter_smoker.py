@@ -43,10 +43,9 @@ def read_data(Smoke_Session_ID, read_type = 'PWM'):
 connection, login_info = get_connection()
 
 Smoke_Session_ID = get_smoke_session(connection)
-Smoke_Session_ID =8
 
 hours_ago = 100000
-start_time = '2018-09-22 18:32:00'
+start_time = '2018-09-29 20:35:00'
 #start_time = '2018-08-02 21:09:00'
 
 for i in range(20):
