@@ -45,4 +45,5 @@ while True:
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     print(output)
-    write_data(output)
+  #  write_data(output)
+    slep(30)	
