@@ -59,11 +59,11 @@ def check_limits(x):
     T3 = y.tail(5).mean().temp3
     if (T0 > 290 or T0<235):
         vibrate_phone('Smoker Temp = {} !!'.format(T0))
-    elif T1 > 200:
+    elif T1 > 202:
         vibrate_phone('Meat Temp1 = {} !!'.format(T1)) 
-    elif T2 > 200:
+    elif T2 > 202:
         vibrate_phone('Meat Temp2 = {} !!'.format(T2))
-    elif T3 > 200:
+    elif T3 > 202:
         vibrate_phone('Meat Temp3 = {} !!'.format(T3))
      
 
