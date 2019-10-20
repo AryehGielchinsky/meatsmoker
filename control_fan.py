@@ -17,6 +17,7 @@ def read_data(Smoke_session_ID):
         cursor = connection.cursor()
         sql = """select date_time, temp0 as smoker_temp
                 from recorded_data
+                where smoke_session_id = {}
                 """.format(Smoke_session_ID)
         cursor.execute(sql)
         result = cursor.fetchall()
