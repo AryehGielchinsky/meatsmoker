@@ -8,7 +8,7 @@ Created on Mon Mar 19 22:03:08 2018
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pymysql.cursors
 import requests
 from datetime import datetime
@@ -57,7 +57,7 @@ def check_limits(x):
     T1 = y.tail(5).mean().temp1
     T2 = y.tail(5).mean().temp2
     T3 = y.tail(5).mean().temp3
-    if (T0 > 265 or T0<235):
+    if (T0 > 310 or T0<235):
         vibrate_phone('Smoker Temp = {} !!'.format(T0))
     elif T1 > 202:
         vibrate_phone('Meat Temp1 = {} !!'.format(T1)) 
