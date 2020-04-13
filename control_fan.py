@@ -71,7 +71,7 @@ while True:
     temp_data = read_data(Smoke_Session_ID)
     temp_data = temp_data.tail(30)
     #print('curr_temp={}'.format(curr_temp))
-    duty_cycle_p = kp*(desired_temp-temp_data['smoker_temp'].tail(1).mean()) 
+    duty_cycle_p = kp*(desired_temp - temp_data.smoker_temp.iloc[-1]) 
 
     duty_cycle_i = ki * ( (temp_data['date_time'].diff().dt.seconds)
                         *(desired_temp-temp_data['smoker_temp']) ).sum()
