@@ -10,7 +10,7 @@ import numpy as np
 from my_functions import get_smoke_session
 from my_functions import get_connection
 
-
+# there are 4 positions in the ADC because I have 4 temp probes ports.
 
 def get_adc_value():
     for pos in range(0,4):
