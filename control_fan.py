@@ -48,7 +48,10 @@ connection, login_info = get_connection()
 
 #smokesessionid needs to be changed manuall for now.
 Smoke_Session_ID = get_smoke_session(connection)
-desired_temp = 300
+
+desired_temp = input("Input desired smoker temp: ")
+print("Smoker temp will be set to {}".format(desired_temp))
+
 kp = .5*.5*1/25
 ki = 2*1/10000
 kd = .5*.5*20
