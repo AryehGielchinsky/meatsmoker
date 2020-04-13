@@ -1,11 +1,7 @@
 #!/usr/bin/python
 import time
 from gpiozero import MCP3008
-#from math import log
-import pymysql.cursors
 from datetime import datetime as dt
-import signal 
-import os
 import numpy as np
 from my_functions import get_smoke_session
 from my_functions import get_connection
