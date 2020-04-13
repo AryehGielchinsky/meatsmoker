@@ -71,7 +71,9 @@ while True:
     temp_data = read_data(Smoke_Session_ID)
     temp_data = temp_data.tail(30)
     #print('curr_temp={}'.format(curr_temp))
-    duty_cycle_p = kp*(desired_temp - temp_data.smoker_temp.iloc[-1]) 
+    current_temp = temp_data.smoker_temp.iloc[-1]
+    
+    duty_cycle_p = kp*(desired_temp - current_temp) 
 
     duty_cycle_i = ki * ( (temp_data['date_time'].diff().dt.seconds)
                         *(desired_temp-temp_data['smoker_temp']) ).sum()
@@ -88,11 +90,11 @@ while True:
     duty_cycle = min(duty_cycle, 1)
     duty_cycle = max(duty_cycle,0)
     print('actual duty_cycle={}'.format(duty_cycle))
-    print('Current temp={}'.format(temp_data['smoker_temp'].tail(1).mean()))
+    print('Current temp={}'.format(current_temp))
     print('')
     fan.value = duty_cycle
     
-    write_data(Smoke_Session_ID, temp_data['smoker_temp'].tail(1).mean(), desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
+    write_data(Smoke_Session_ID, current_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
     sleep(10)
 
     #fan.close()
