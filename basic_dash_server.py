@@ -32,10 +32,8 @@ def read_data(Smoke_Session_ID, read_type = 'PWM'):
         print('read_data {}'.format(inst) )
         
 
-   
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)   
+app = dash.Dash(__name__)
     
     
         
