@@ -41,7 +41,6 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         
 connection, login_info = get_connection()
 Smoke_Session_ID = get_smoke_session(connection)
-Smoke_Session_ID=19
 
 df=pd.DataFrame( read_data(Smoke_Session_ID, 'smoker_temps') )
 
