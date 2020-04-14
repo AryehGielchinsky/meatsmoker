@@ -30,7 +30,6 @@ def read_data(Smoke_Session_ID, connection, read_type = 'PWM'):
                 """.format(table_name, Smoke_Session_ID)
         cursor.execute(sql)
         result = cursor.fetchall()
-        print(len(result))
         return result
     except Exception as inst:
         print('read_data {}'.format(inst) )
@@ -58,10 +57,7 @@ app.layout = html.Div(
 def on_click(n_clicks):
     connection, login_info = get_connection()
     Smoke_Session_ID = get_smoke_session(connection)
-    
-    print(datetime.now())
     df=pd.DataFrame( read_data(Smoke_Session_ID, connection, 'smoker_temps') )
-    print(df.iloc[-1].date_time)
     data = [
             dict(
                     x=df['date_time']
