@@ -1,11 +1,4 @@
-from time import sleep
-from datetime import datetime
-import numpy as np
 import pandas as pd
-import pymysql.cursors
-from datetime import datetime as dt
-import os
-from datetime import datetime, timedelta
 from my_functions import get_smoke_session
 from my_functions import get_connection
 import dash
