@@ -16,7 +16,6 @@ def get_adc_value():
     vals[vals > .985] = None
     return vals
 
-
 def get_temp_percent():
     x = np.zeros((4,5))
     for i in range(0, 5):
@@ -24,11 +23,8 @@ def get_temp_percent():
         time.sleep(.2)
     return np.average(x,axis = 1)
 
-
-
 def get_resistance(temp_percent, r=46000):
     return r*temp_percent/(1-temp_percent)
-
 
 #Steinhart–Hart equation converts resistance to temperature
 def get_temp(R):
@@ -40,9 +36,6 @@ def get_temp(R):
     T = T*(9/5) - 459.67
     return(T)
 
-
-
-#the frist value is smokesessionid and needs to be changed manually
 def write_data(temp):
  #   temp[temp is np.nan] = 'null'
     try:
@@ -56,33 +49,91 @@ def write_data(temp):
     except Exception as inst:
         print('write_date {}'.format(inst) )
 
+########################################################################################
+def get_last_smoke_session(Smoke_session_ID, connection):
+    try:
+        cursor = connection.cursor()
+        sql = """
+            select *
+            from smoke_session
+            where id = {}
+                """.format(Smoke_session_ID)
+        cursor.execute(sql)
+        result = cursor.fetchall() #returns a list of dicts
+        return result[0] # onyl 1 dict
+    except Exception as inst:
+        print('read_data {}'.format(inst) )
 
 
-adcs = {}
+def write_new_ss(new_ss, connection):
+    try:
+        cursor = connection.cursor()
+        sql = """insert into smoke_session (date_time, meat_type, kilos, notes)
+                values (now(), '{}', '{}', '{}');
+                """.format(new_ss['meat_type'], new_ss['kilos'], new_ss['notes'])
+        cursor.execute(sql)
+            # connection is not autocommit by default. So you must commit to save your changes.
+        connection.commit()
+    except Exception as inst:
+        print('write_new_ss {}'.format(inst) )
 
-connection, login_info = get_connection()
 
-Smoke_Session_ID = get_smoke_session(connection)
-
-
-while True:
-
-    print('Start')
+def check_smoke_session(connection):
+        
+    Smoke_Session_ID = get_smoke_session(connection)
     
-    temp_percent = get_temp_percent()
+    last_ss = get_last_smoke_session(Smoke_Session_ID, connection)
     
-    resistance = get_resistance(temp_percent = temp_percent)
-    
-    temp = get_temp(R = resistance)
-    temp = temp.tolist()    
-    temp = ['null' if (np.isnan(_)) else _ for _ in temp]
-
-    print(temp)
-
-    write_data(temp)
-    print('Data Written')
-              
-    time.sleep(1)
-    print('Sleep time over')
+    print('Last Smoke Session is:')
+    print('ID:          {}'.format(last_ss['id']))
+    print('Start:       {}'.format(last_ss['date_time']))
+    print('Meat Type:   {}'.format(last_ss['meat_type']))
+    print('kilos:       {}'.format(last_ss['kilos']))
+    print('notes:       {}'.format(last_ss['notes']))
     print('')
+    
+    continue_ss = input("Do you want to continue this smoke session? (y/n): ")
+    
+    if continue_ss== 'n':
+        new_ss = {}
+        new_ss['meat_type'] = input('Enter meat type: ')
+        new_ss['kilos'] = float(input('Enter number kilos: '))
+        new_ss['notes'] = input('Enter notes: ')
+        
+        write_new_ss(new_ss, connection)
+        Smoke_Session_ID = get_smoke_session(connection)
+        
+    return Smoke_Session_ID        
+        
+########################################################################################
+
+
+
+if __name__ == "__main__":
+
+    adcs = {}  
+    
+    connection, login_info = get_connection()
+    Smoke_Session_ID = check_smoke_session(connection)
+    
+    while True:
+    
+        print('Start')
+        
+        temp_percent = get_temp_percent()
+        
+        resistance = get_resistance(temp_percent = temp_percent)
+        
+        temp = get_temp(R = resistance)
+        temp = temp.tolist()    
+        temp = ['null' if (np.isnan(_)) else _ for _ in temp]
+    
+        print(temp)
+    
+        write_data(temp)
+        print('Data Written')
+                  
+        time.sleep(1)
+        print('Sleep time over')
+        print('')
 
