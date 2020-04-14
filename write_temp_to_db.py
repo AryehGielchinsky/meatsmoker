@@ -82,7 +82,7 @@ while True:
     write_data(temp)
     print('Data Written')
               
-    time.sleep(10)
+    time.sleep(1)
     print('Sleep time over')
     print('')
 

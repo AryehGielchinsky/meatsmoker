@@ -69,7 +69,7 @@ while True:
     
     #Date_Time, Temp0 as smoker_temp
     temp_data = read_data(Smoke_Session_ID)
-    temp_data = temp_data.tail(30)
+    temp_data = temp_data.tail(300)
     #print('curr_temp={}'.format(curr_temp))
     current_temp = temp_data.smoker_temp.iloc[-1]
     
