@@ -42,7 +42,7 @@ def write_data(temp):
         cursor = connection.cursor()
         local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
         sql = """insert into recorded_data (smoke_session_id, date_time, temp0, temp1, temp2, temp3)
-                  values ({}, '{}', {}, {}, {}, {} )""".format(Smoke_Session_ID, local_time, temp[0], temp[1], temp[2], temp[3] )
+                  values ({}, '{}', {}, {}, {}, {} )""".format(smoke_session_id, local_time, temp[0], temp[1], temp[2], temp[3] )
         cursor.execute(sql)
             # connection is not autocommit by default. So you must commit to save your changes.
         connection.commit()
@@ -50,14 +50,14 @@ def write_data(temp):
         print('write_date {}'.format(inst) )
 
 ########################################################################################
-def get_last_smoke_session(Smoke_session_ID, connection):
+def get_last_smoke_session(smoke_session_id, connection):
     try:
         cursor = connection.cursor()
         sql = """
             select *
             from smoke_session
             where id = {}
-                """.format(Smoke_session_ID)
+                """.format(smoke_session_id)
         cursor.execute(sql)
         result = cursor.fetchall() #returns a list of dicts
         return result[0] # onyl 1 dict
@@ -80,9 +80,9 @@ def write_new_ss(new_ss, connection):
 
 def check_smoke_session(connection):
         
-    Smoke_Session_ID = get_smoke_session(connection)
+    smoke_session_id = get_smoke_session(connection)
     
-    last_ss = get_last_smoke_session(Smoke_Session_ID, connection)
+    last_ss = get_last_smoke_session(smoke_session_id, connection)
     
     print('Last Smoke Session is:')
     print('ID:          {}'.format(last_ss['id']))
@@ -101,9 +101,9 @@ def check_smoke_session(connection):
         new_ss['notes'] = input('Enter notes: ')
         
         write_new_ss(new_ss, connection)
-        Smoke_Session_ID = get_smoke_session(connection)
+        smoke_session_id = get_smoke_session(connection)
         
-    return Smoke_Session_ID        
+    return smoke_session_id        
         
 ########################################################################################
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     adcs = {}  
     
     connection, login_info = get_connection()
-    Smoke_Session_ID = check_smoke_session(connection)
+    smoke_session_id = check_smoke_session(connection)
     
     while True:
     
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     
         print(temp)
     
-        write_data(temp)
+        write_data(temp, smoke_session_id)
         print('Data Written')
                   
         time.sleep(1)
