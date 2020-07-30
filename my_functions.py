@@ -9,18 +9,7 @@ Created on Thu Aug  2 14:51:30 2018
 import pymysql.cursors
 import os
 import pandas as pd
-
- 
-def get_smoke_session(connection):
-    try:
-        cursor = connection.cursor()
-        sql = """select max(id) as smoke_session_id from smoke_session"""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result[0]['smoke_session_id'] #not sure why it returns a list with a dict in it
-    except Exception as inst:
-        print('get_smoke_session {}'.format(inst) )  
-        
+       
 
 def get_connection():
     #get DB info
@@ -57,3 +46,12 @@ def hit_db(sql, connection, to_pandas=False):
         print('SQL is {}'.format(sql))
 
 
+def get_smoke_session(connection):
+    try:
+        cursor = connection.cursor()
+        sql = """select max(id) as smoke_session_id from smoke_session"""
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result[0]['smoke_session_id'] #not sure why it returns a list with a dict in it
+    except Exception as inst:
+        print('get_smoke_session {}'.format(inst) )  
