@@ -39,12 +39,14 @@ def hit_db(sql, connection):
         # The results are a list of dicts. I generally want to put them into a df, or get one record
         if len(result)>1:
             return pd.DataFrame(result)
-        else:
+        elif len(result) == 1:
             return result[0]
+        else:
+            pass
         
     except Exception as inst:
         print('Error is: {}'.format(inst) )
-        print('SQL is {}'.format(sql))
+        print('SQL is: {}'.format(sql))
 
 
 def get_last_smoke_session_id(connection):
