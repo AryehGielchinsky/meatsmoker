@@ -29,7 +29,7 @@ def get_connection():
     return connection, login_info
 
 
-def hit_db(sql, connection, to_pandas=False):
+def hit_db(sql, connection):
     try:
         cursor = connection.cursor()
         cursor.execute(sql)
@@ -37,7 +37,7 @@ def hit_db(sql, connection, to_pandas=False):
         connection.commit()
         
         # The results are a list of dicts. I generally want to put them into a df, or get one record
-        if to_pandas:
+        if len(result)>1:
             return pd.DataFrame(result)
         else:
             return result[0]
@@ -51,6 +51,16 @@ def get_last_smoke_session_id(connection):
     sql = """select max(id) as smoke_session_id from smoke_session"""
     return hit_db(sql, connection)['smoke_session_id']
     
+
+
+def read_data(table_name, smoke_session_id, connection):
+    sql = """select *
+             from {0}
+             where smoke_session_id = {1}
+             """.format(table_name, smoke_session_id)
+
+    return hit_db(sql, connection)
+
     
 
         

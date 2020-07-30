@@ -3,7 +3,7 @@ import time
 from gpiozero import MCP3008
 from datetime import datetime as dt
 import numpy as np
-from my_functions import get_last_smoke_session_id, get_connection, hit_db
+from my_functions import get_last_smoke_session_id, get_connection, hit_db, read_data
 
 # there are 4 positions in the ADC because I have 4 temp probes ports.
 
@@ -45,15 +45,6 @@ def write_temp(temp, smoke_session_id, connection):
 
 
 ########################################################################################
-def get_smoke_session_data(smoke_session_id, connection):
-    sql = """select *
-             from smoke_session
-             where id = {}
-             """.format(smoke_session_id)     
-            
-    return hit_db(sql, connection)
-
-
 def write_new_ss(new_ss, connection):
     sql = """insert into smoke_session (date_time, meat_type, kilos, notes)
              values (now(), '{}', '{}', '{}');
@@ -65,8 +56,8 @@ def check_smoke_session(connection):
         
     smoke_session_id = get_last_smoke_session_id(connection)
     
-    last_ss = get_smoke_session_data(smoke_session_id, connection)
-    
+    last_ss = read_data('smoke_session', smoke_session_id, connection)
+
     print('Last Smoke Session is:')
     print('ID:          {}'.format(last_ss['id']))
     print('Start:       {}'.format(last_ss['date_time']))
