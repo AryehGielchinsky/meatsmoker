@@ -55,3 +55,6 @@ def get_smoke_session(connection):
         return result[0]['smoke_session_id'] #not sure why it returns a list with a dict in it
     except Exception as inst:
         print('get_smoke_session {}'.format(inst) )  
+        
+        
+        
