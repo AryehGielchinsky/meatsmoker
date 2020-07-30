@@ -8,6 +8,7 @@ Created on Thu Aug  2 14:51:30 2018
 
 import pymysql.cursors
 import os
+import pandas as pd
 
  
 def get_smoke_session(connection):
@@ -37,3 +38,22 @@ def get_connection():
                                  cursorclass=pymysql.cursors.DictCursor)
     
     return connection, login_info
+
+
+def hit_db(sql, connection, to_pandas=False):
+    try:
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall() #returns a list of dicts
+        connection.commit()
+        
+        if to_pandas:
+            return pd.DataFrame(result)
+        else:
+            return result
+        
+    except Exception as inst:
+        print('Error is: {}'.format(inst) )
+        print('SQL is {}'.format(sql))
+
+
