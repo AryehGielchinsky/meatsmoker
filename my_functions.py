@@ -47,14 +47,17 @@ def hit_db(sql, connection, to_pandas=False):
 
 
 def get_smoke_session(connection):
-    try:
-        cursor = connection.cursor()
-        sql = """select max(id) as smoke_session_id from smoke_session"""
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result[0]['smoke_session_id'] #not sure why it returns a list with a dict in it
-    except Exception as inst:
-        print('get_smoke_session {}'.format(inst) )  
+    sql = """select max(id) as smoke_session_id from smoke_session"""
+    return hit_db(sql, connection)[0]['smoke_session_id']
+    
+    
+
+        
+        
+        
+        
+        
+        
         
         
         
