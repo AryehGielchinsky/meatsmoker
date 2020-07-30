@@ -59,7 +59,7 @@ def check_smoke_session(connection):
     last_ss = read_data('smoke_session', smoke_session_id, connection)
 
     print('Last Smoke Session is:')
-    print('ID:          {}'.format(last_ss['id']))
+    print('ID:          {}'.format(last_ss['smoke_session_id']))
     print('Start:       {}'.format(last_ss['date_time']))
     print('Meat Type:   {}'.format(last_ss['meat_type']))
     print('kilos:       {}'.format(last_ss['kilos']))

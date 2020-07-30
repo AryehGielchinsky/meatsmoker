@@ -24,7 +24,7 @@ app.layout = html.Div(
 def on_click(n_clicks):
     connection, login_info = get_connection()
     smoke_session_id = get_last_smoke_session_id(connection)
-    df = read_data('recorded_data',smoke_session_id, connection)
+    df = read_data('recorded_data', smoke_session_id, connection)
     data = [
             dict(
                     x=df['date_time']
