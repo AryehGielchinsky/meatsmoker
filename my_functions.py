@@ -36,10 +36,11 @@ def hit_db(sql, connection, to_pandas=False):
         result = cursor.fetchall() #returns a list of dicts
         connection.commit()
         
+        # The results are a list of dicts. I generally want to put them into a df, or get one record
         if to_pandas:
             return pd.DataFrame(result)
         else:
-            return result
+            return result[0]
         
     except Exception as inst:
         print('Error is: {}'.format(inst) )
@@ -48,7 +49,7 @@ def hit_db(sql, connection, to_pandas=False):
 
 def get_smoke_session(connection):
     sql = """select max(id) as smoke_session_id from smoke_session"""
-    return hit_db(sql, connection)[0]['smoke_session_id']
+    return hit_db(sql, connection)['smoke_session_id']
     
     
 
