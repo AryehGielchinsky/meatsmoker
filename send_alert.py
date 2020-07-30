@@ -13,7 +13,7 @@ import pymysql.cursors
 import requests
 from datetime import datetime
 import time
-from my_functions import get_smoke_session
+from my_functions import get_last_smoke_session_id
 from my_functions import get_connection
 
 
@@ -92,7 +92,7 @@ vibrate_phone('Connection to phone is working')
 
 connection, login_info = get_connection()
 
-Smoke_Session_ID = get_smoke_session(connection)
+Smoke_Session_ID = get_last_smoke_session_id(connection)
 
 while True:
     

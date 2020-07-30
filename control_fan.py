@@ -8,7 +8,7 @@ from datetime import datetime as dt
 import signal 
 import os
 import pandas as pd
-from my_functions import get_smoke_session
+from my_functions import get_last_smoke_session_id
 from my_functions import get_connection
 
 
@@ -47,7 +47,7 @@ fan = pwm(pin = 4, initial_value = 1.0, frequency = 25000, pin_factory = factory
 connection, login_info = get_connection()
 
 #smokesessionid needs to be changed manuall for now.
-Smoke_Session_ID = get_smoke_session(connection)
+Smoke_Session_ID = get_last_smoke_session_id(connection)
 
 desired_temp = float(input("Input desired smoker temp: "))
 print("Smoker temp will be set to {}".format(desired_temp))

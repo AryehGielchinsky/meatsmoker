@@ -3,8 +3,7 @@ import time
 from gpiozero import MCP3008
 from datetime import datetime as dt
 import numpy as np
-from my_functions import get_smoke_session
-from my_functions import get_connection
+from my_functions import get_last_smoke_session_id, get_connection, hit_db
 
 # there are 4 positions in the ADC because I have 4 temp probes ports.
 
@@ -36,53 +35,37 @@ def get_temp(R):
     T = T*(9/5) - 459.67
     return(T)
 
-def write_data(temp):
- #   temp[temp is np.nan] = 'null'
-    try:
-        cursor = connection.cursor()
-        local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into recorded_data (smoke_session_id, date_time, temp0, temp1, temp2, temp3)
-                  values ({}, '{}', {}, {}, {}, {} )""".format(smoke_session_id, local_time, temp[0], temp[1], temp[2], temp[3] )
-        cursor.execute(sql)
-            # connection is not autocommit by default. So you must commit to save your changes.
-        connection.commit()
-    except Exception as inst:
-        print('write_date {}'.format(inst) )
+
+def write_temp(temp, smoke_session_id, connection):
+    local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
+    sql = """insert into recorded_data (smoke_session_id, date_time, temp0, temp1, temp2, temp3)
+             values ({}, '{}', {}, {}, {}, {} )
+             """.format(smoke_session_id, local_time, temp[0], temp[1], temp[2], temp[3] )
+    hit_db(sql, connection)
+
 
 ########################################################################################
-def get_last_smoke_session(smoke_session_id, connection):
-    try:
-        cursor = connection.cursor()
-        sql = """
-            select *
-            from smoke_session
-            where id = {}
-                """.format(smoke_session_id)
-        cursor.execute(sql)
-        result = cursor.fetchall() #returns a list of dicts
-        return result[0] # onyl 1 dict
-    except Exception as inst:
-        print('read_data {}'.format(inst) )
+def get_smoke_session_data(smoke_session_id, connection):
+    sql = """select *
+             from smoke_session
+             where id = {}
+             """.format(smoke_session_id)     
+            
+    return hit_db(sql, connection)
 
 
 def write_new_ss(new_ss, connection):
-    try:
-        cursor = connection.cursor()
-        sql = """insert into smoke_session (date_time, meat_type, kilos, notes)
-                values (now(), '{}', '{}', '{}');
-                """.format(new_ss['meat_type'], new_ss['kilos'], new_ss['notes'])
-        cursor.execute(sql)
-            # connection is not autocommit by default. So you must commit to save your changes.
-        connection.commit()
-    except Exception as inst:
-        print('write_new_ss {}'.format(inst) )
+    sql = """insert into smoke_session (date_time, meat_type, kilos, notes)
+             values (now(), '{}', '{}', '{}');
+             """.format(new_ss['meat_type'], new_ss['kilos'], new_ss['notes'])
+    return hit_db(sql, connection)
 
 
 def check_smoke_session(connection):
         
-    smoke_session_id = get_smoke_session(connection)
+    smoke_session_id = get_last_smoke_session_id(connection)
     
-    last_ss = get_last_smoke_session(smoke_session_id, connection)
+    last_ss = get_smoke_session_data(smoke_session_id, connection)
     
     print('Last Smoke Session is:')
     print('ID:          {}'.format(last_ss['id']))
@@ -101,7 +84,7 @@ def check_smoke_session(connection):
         new_ss['notes'] = input('Enter notes: ')
         
         write_new_ss(new_ss, connection)
-        smoke_session_id = get_smoke_session(connection)
+        smoke_session_id = get_last_smoke_session_id(connection)
         
     return smoke_session_id        
         
@@ -130,7 +113,7 @@ if __name__ == "__main__":
     
         print(temp)
     
-        write_data(temp, smoke_session_id)
+        write_temp(temp, smoke_session_id, connection)
         print('Data Written')
                   
         time.sleep(1)

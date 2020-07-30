@@ -14,7 +14,7 @@ from datetime import datetime as dt
 import os
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-from my_functions import get_smoke_session
+from my_functions import get_last_smoke_session_id
 from my_functions import get_connection
 
 
@@ -42,7 +42,7 @@ def read_data(Smoke_Session_ID, read_type = 'PWM'):
         
 connection, login_info = get_connection()
 
-Smoke_Session_ID = get_smoke_session(connection)
+Smoke_Session_ID = get_last_smoke_session_id(connection)
 
 hours_ago = 100000
 start_time = '2019-01-10 20:35:00'

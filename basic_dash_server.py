@@ -1,5 +1,5 @@
 import pandas as pd
-from my_functions import get_smoke_session
+from my_functions import get_last_smoke_session_id
 from my_functions import get_connection
 import dash
 import dash_core_components as dcc
@@ -49,7 +49,7 @@ app.layout = html.Div(
         )
 def on_click(n_clicks):
     connection, login_info = get_connection()
-    Smoke_Session_ID = get_smoke_session(connection)
+    Smoke_Session_ID = get_last_smoke_session_id(connection)
     df=pd.DataFrame( read_data(Smoke_Session_ID, connection, 'smoker_temps') )
     data = [
             dict(

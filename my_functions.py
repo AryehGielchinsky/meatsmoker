@@ -47,7 +47,7 @@ def hit_db(sql, connection, to_pandas=False):
         print('SQL is {}'.format(sql))
 
 
-def get_smoke_session(connection):
+def get_last_smoke_session_id(connection):
     sql = """select max(id) as smoke_session_id from smoke_session"""
     return hit_db(sql, connection)['smoke_session_id']
     
