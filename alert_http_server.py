@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import datetime
+
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         message = '{"alert":"True", "smoker_temp":250, "meat_temp":160}'
+        message = datetime.datetime.now().strftime('%y/%m/%d %H:%M:%S')
 
         self.protocol_version = "HTTP/1.1"
         self.send_response(200)
