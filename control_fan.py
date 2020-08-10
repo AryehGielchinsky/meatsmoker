@@ -32,12 +32,9 @@ if __name__ == "__main__":
     
     dc = {} # duty cycle
     
-    #-z['curr_temp'].diff()/z['Date_Time'].diff().dt.seconds
-    #(z['Date_Time'].diff().dt.seconds)*(260-z['curr_temp'])
-    
     while True:
         print('Start fan controller')
-        #temperature control will be achieve with PID controller logic.
+        #temperature control will be achieved with PID controller logic.
         #The fan strength will be detirmined by the error between the smoker temperature and
         #the desired temperature.
 
