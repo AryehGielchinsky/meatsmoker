@@ -1,103 +1,80 @@
 from gpiozero import PWMOutputDevice as pwm
 from time import sleep
-import numpy as np
 from gpiozero.pins.pigpio import PiGPIOFactory
 import time
-import pymysql.cursors
 from datetime import datetime as dt
-import signal 
-import os
 import pandas as pd
-from my_functions import get_last_smoke_session_id
-from my_functions import get_connection
+from my_functions import get_last_smoke_session_id, get_connection, read_data
 
 
-def read_data(Smoke_session_ID):
-    try:
-        cursor = connection.cursor()
-        sql = """select date_time, temp0 as smoker_temp
-                from recorded_data
-                where smoke_session_id = {}
-                """.format(Smoke_session_ID)
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return pd.DataFrame(result)
-    except Exception as inst:
-        print('read_data {}'.format(inst) )
-
-#write_data(Smoke_Session_ID, temp_data['smoker_temp'].tail(1).mean(), desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
-def write_data(Smoke_Session_ID, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle):
-    try:
-        cursor = connection.cursor()
-        local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql = """insert into PWM (smoke_session_id, date_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
-                  values ({}, '{}', {}, {}, {}, {}, {}, {})""".format(Smoke_Session_ID, local_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
-        cursor.execute(sql)
-            # connection is not autocommit by default. So you must commit to save your changes.
-        connection.commit()
-    except Exception as inst:
-        print('write_date {}'.format(inst) )
+def write_data(smoke_session_id, curr_temp, desired_temp, dc, connection):
+    local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
+    sql = """insert into PWM (smoke_session_id, date_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
+             values ({}, '{}', {}, {}, {}, {}, {}, {})
+             """.format(smoke_session_id, local_time, curr_temp, desired_temp, dc['p'], dc['i'], dc['d'], dc['total'])
+    hit_db(sql, connection)
 
 
-factory = PiGPIOFactory()
-fan = pwm(pin = 4, initial_value = 1.0, frequency = 25000, pin_factory = factory)
 
-
-#connection to MySQL db
-connection, login_info = get_connection()
-
-#smokesessionid needs to be changed manuall for now.
-Smoke_Session_ID = get_last_smoke_session_id(connection)
-
-desired_temp = float(input("Input desired smoker temp: "))
-print("Smoker temp will be set to {}".format(desired_temp))
-
-kp = .5*.5*1/25
-ki = 2*1/10000
-kd = .5*.5*20
-
-#-z['curr_temp'].diff()/z['Date_Time'].diff().dt.seconds
-#(z['Date_Time'].diff().dt.seconds)*(260-z['curr_temp'])
-
-while True:
-    print('Start fan controller')
-    #temperature control will be achieve with PID controller logic.
-    #The fan strength will be detirmined by the error between the smoker temperature and
-    #the desired temperature.
-    # The error itself (proportional control), the intergral of the error (intergral control)
-    # and the derivative of the error (derivative controll) will be used
+if __name__ == "__main__":
     
-    #Date_Time, Temp0 as smoker_temp
-    temp_data = read_data(Smoke_Session_ID)
-    temp_data = temp_data.tail(300)
-    #print('curr_temp={}'.format(curr_temp))
-    current_temp = temp_data.smoker_temp.iloc[-1]
+    factory = PiGPIOFactory()
+    fan = pwm(pin = 4, initial_value = 1.0, frequency = 25000, pin_factory = factory)
     
-    duty_cycle_p = kp*(desired_temp - current_temp) 
-
-    duty_cycle_i = ki * ( (temp_data['date_time'].diff().dt.seconds)
-                        *(desired_temp-temp_data['smoker_temp']) ).sum()
-
-    duty_cycle_d = (-kd * temp_data['smoker_temp'].diff()
-                    /temp_data['date_time'].diff().dt.seconds).mean()
-
-    print('duty_cycle_p={}'.format(duty_cycle_p))
-    print('duty_cycle_i={}'.format(duty_cycle_i))
-    print('duty_cycle_d={}'.format(duty_cycle_d))
-
-    duty_cycle = duty_cycle_p + duty_cycle_i + duty_cycle_d
-    print('duty_cycle unmodded={}'.format(duty_cycle))
-    duty_cycle = min(duty_cycle, 1)
-    duty_cycle = max(duty_cycle,0)
-    print('actual duty_cycle={}'.format(duty_cycle))
-    print('Current temp={}'.format(current_temp))
-    print('')
-    fan.value = duty_cycle
+    connection, login_info = get_connection()
+    smoke_session_id = get_last_smoke_session_id(connection)
     
-    write_data(Smoke_Session_ID, current_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
-    sleep(10)
-
-    #fan.close()
+    desired_temp = float(input("Input desired smoker temp: "))
+    print("Smoker temp will be set to {}".format(desired_temp))
     
+    k={} # the PID variables
+    k['p'] = .5*.5*1/25
+    k['i'] = 2*1/10000
+    k['d'] = -.5*.5*20
+    
+    dc = {} # duty cycle
+    
+    #-z['curr_temp'].diff()/z['Date_Time'].diff().dt.seconds
+    #(z['Date_Time'].diff().dt.seconds)*(260-z['curr_temp'])
+    
+    while True:
+        print('Start fan controller')
+        #temperature control will be achieve with PID controller logic.
+        #The fan strength will be detirmined by the error between the smoker temperature and
+        #the desired temperature.
 
-
+        
+        temp_data = read_data('recorded_data', smoke_session_id, connection)
+        temp_data = temp_data[['date_time', 'temp0']].rename(columns={"temp0": "smoker_temp"})
+        
+        temp_data = temp_data.tail(300) # this should be time based and the intergral should be longer and the deriv shorter
+        #print('curr_temp={}'.format(curr_temp))
+        current_temp = temp_data.smoker_temp.iloc[-1]
+        
+        dc['p'] = k['p']*(desired_temp - current_temp) 
+    
+        dc['i'] = k['i'] * ( (temp_data['date_time'].diff().dt.seconds)
+                            *(desired_temp-temp_data['smoker_temp']) ).sum()
+    
+        dc['d'] = (k['d'] * temp_data['smoker_temp'].diff()
+                            /temp_data['date_time'].diff().dt.seconds).mean()
+    
+        dc['total'] = dc['p'] + dc['i'] + dc['d']
+        
+        print('unmodded duty cycle valuea: {}'.format(dc))
+    
+        dc['total'] = min(dc['total'], 1)
+        dc['total'] = max(dc['total'],0)
+        print('actual duty_cycle: {}'.format(dc['total']))
+        print('Current temp={}'.format(current_temp))
+        print('')
+        fan.value = dc['total']
+        
+        write_data(smoke_session_id, current_temp, desired_temp, dc, connection)
+        sleep(10)
+    
+        #fan.close()
+        
+    
+    
+    
