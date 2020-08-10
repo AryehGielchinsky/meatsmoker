@@ -1,10 +1,8 @@
 from gpiozero import PWMOutputDevice as pwm
 from time import sleep
 from gpiozero.pins.pigpio import PiGPIOFactory
-import time
 from datetime import datetime as dt
-import pandas as pd
-from my_functions import get_last_smoke_session_id, get_connection, read_data
+from my_functions import get_last_smoke_session_id, get_connection, read_data, hit_db
 
 
 def write_data(smoke_session_id, curr_temp, desired_temp, dc, connection):
