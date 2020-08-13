@@ -3,7 +3,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import datetime
 import json
-from my_functions import get_last_smoke_session_id, get_connection, read_data, hit_db
+from my_functions import get_last_smoke_session_id, get_connection, read_data
 
 
 
