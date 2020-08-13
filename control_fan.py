@@ -28,7 +28,7 @@ if __name__ == "__main__":
     k={} # the PID variables
     k['p'] = 1/25
     k['i'] = 2*1/10000*0
-    k['d'] = -20
+    k['d'] = -10
     
     dc = {} # duty cycle
     
