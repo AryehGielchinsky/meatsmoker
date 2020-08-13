@@ -42,7 +42,7 @@ if __name__ == "__main__":
         temp_data = read_data('recorded_data', smoke_session_id, connection)
         temp_data = temp_data[['date_time', 'temp0']].rename(columns={"temp0": "smoker_temp"})
         
-        temp_data = temp_data.tail(5) # this should be time based and the intergral should be longer and the deriv shorter
+        temp_data = temp_data.tail(50) # this should be time based and the intergral should be longer and the deriv shorter
         #print('curr_temp={}'.format(curr_temp))
         current_temp = temp_data.smoker_temp.iloc[-1]
         
