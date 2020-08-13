@@ -3,6 +3,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import datetime
 import json
+from my_functions import get_last_smoke_session_id, get_connection, read_data, hit_db
 
 
 
@@ -20,7 +21,7 @@ def check_meat_temp(temps):
 def check_smoker_temp(temps):
     current_smoker_temp=temps['smoker_temp']
     desired_smoker_temp=250
-    leeway=25
+    leeway=30
     
     if (desired_smoker_temp - leeway) < current_smoker_temp < (desired_smoker_temp + leeway) :
         return False
@@ -33,10 +34,15 @@ def check_smoker_temp(temps):
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         
-        # this here for testing. should pull from db
         temps={}
-        temps['smoker_temp'] = 257.3
-        temps['meat_temp'] = 195
+        
+        df = read_data('recorded_data', smoke_session_id, connection).tail(1)
+        
+        temps['smoker_temp'] = df.temp0.values[0]
+        temps['meat_temp'] = df.temp1.values[0]
+        
+        print(temps)
+        
         
         message={}
         message['alert']=check_meat_temp(temps) | check_smoker_temp(temps)
@@ -60,5 +66,11 @@ def run():
     httpd = HTTPServer(server, RequestHandler)
     httpd.serve_forever()
     
-print('Starting server')
-run()
+    
+if __name__ == "__main__":
+    print('Starting server')
+
+    connection, login_info = get_connection()
+    smoke_session_id = get_last_smoke_session_id(connection)
+
+    run()
