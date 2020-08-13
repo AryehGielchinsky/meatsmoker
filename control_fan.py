@@ -26,7 +26,7 @@ if __name__ == "__main__":
     print("Smoker temp will be set to {}".format(desired_temp))
     
     k={} # the PID variables
-    k['p'] = 1/35
+    k['p'] = 1/25
     k['i'] = 2*1/10000*0
     k['d'] = -20
     
