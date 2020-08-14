@@ -2,6 +2,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import datetime
+import numpy as np
 import json
 from my_functions import get_last_smoke_session_id, get_connection, read_data
 
@@ -28,7 +29,12 @@ def check_smoker_temp(temps):
     else:
         return True   
     
-    
+def check_time(temps):
+    if temps['smoker_delay'] < 60:
+        return False
+    else:
+        return
+        
     
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -40,12 +46,12 @@ class RequestHandler(BaseHTTPRequestHandler):
         
         temps['smoker_temp'] = df.temp0.values[0]
         temps['meat_temp'] = df.temp1.values[0]
-        
+        temps['smoker_delay'] = (datetime.datetime.now() - df.date_time)/np.timedelta64(1, 's')
+            
         print(temps)
         
-        
         message={}
-        message['alert']=check_meat_temp(temps) | check_smoker_temp(temps)
+        message['alert']=check_meat_temp(temps) | check_smoker_temp(temps) | check_time(temps)
         message['alert'] = str(message['alert'])
         message.update(temps)
         message = json.dumps(message) #stringify
