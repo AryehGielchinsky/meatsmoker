@@ -47,6 +47,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         temps['smoker_temp'] = df.temp0.values[0]
         temps['meat_temp'] = df.temp1.values[0]
         temps['smoker_delay'] = (datetime.datetime.now() - df.date_time)/np.timedelta64(1, 's')
+        temps['smoker_delay'] = temps['smoker_delay'].values[0]
             
         print(temps)
         
