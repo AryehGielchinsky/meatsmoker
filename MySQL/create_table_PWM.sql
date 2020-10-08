@@ -1,8 +1,13 @@
-create table cpu_temp (
-	id int NOT NULL AUTO_INCREMENT,
+create table PWM
+	(id int NOT NULL AUTO_INCREMENT,
 	smoke_session_id int,
 	date_time DATETIME,
-	cpu_temp VARCHAR(255),
-	PRIMARY KEY (id)	
-)
-
+	curr_temp FLOAT,
+	desired_temp FLOAT,
+	duty_cycle_p FLOAT,
+	duty_cycle_i FLOAT,
+	duty_cycle_d FLOAT,
+	duty_cycle FLOAT,
+	PRIMARY KEY (id),
+	INDEX (smoke_session_id)
+	)

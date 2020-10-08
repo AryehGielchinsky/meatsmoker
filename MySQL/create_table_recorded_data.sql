@@ -6,5 +6,6 @@ create table recorded_data
 	temp1 FLOAT,
 	temp2 FLOAT,
 	temp3 FLOAT,
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	INDEX (smoke_session_id)
 	)
