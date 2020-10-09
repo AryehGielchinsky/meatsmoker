@@ -56,17 +56,23 @@ def check_smoke_session(connection):
         
     smoke_session_id = get_last_smoke_session_id(connection)
     
-    last_ss = read_data('smoke_session', smoke_session_id, connection)
-
-    print('Last Smoke Session is:')
-    print('ID:          {}'.format(last_ss['smoke_session_id']))
-    print('Start:       {}'.format(last_ss['date_time']))
-    print('Meat Type:   {}'.format(last_ss['meat_type']))
-    print('kilos:       {}'.format(last_ss['kilos']))
-    print('notes:       {}'.format(last_ss['notes']))
-    print('')
+    if smoke_session_id == None:
+        first_smoke = input("Is this your first smoke in this db? (y/n): ")
+        if first_smoke == 'y':
+            continue_ss = 'n'
+        else:
+            raise ValueError('I cant find any earlier smoke sessions. Try debugging.')
+    else:        
+        last_ss = read_data('smoke_session', smoke_session_id, connection)    
+        print('Last Smoke Session is:')
+        print('ID:          {}'.format(last_ss['smoke_session_id']))
+        print('Start:       {}'.format(last_ss['date_time']))
+        print('Meat Type:   {}'.format(last_ss['meat_type']))
+        print('kilos:       {}'.format(last_ss['kilos']))
+        print('notes:       {}'.format(last_ss['notes']))
+        print('')        
+        continue_ss = input("Do you want to continue this smoke session? (y/n): ")
     
-    continue_ss = input("Do you want to continue this smoke session? (y/n): ")
     
     if continue_ss== 'n':
         new_ss = {}
