@@ -45,7 +45,7 @@ connection, login_info = get_connection()
 Smoke_Session_ID = get_last_smoke_session_id(connection)
 
 hours_ago = 100000
-start_time = '2019-01-10 20:35:00'
+start_time = '2020-11-26 11:45:00'
 #start_time = '2018-08-02 21:09:00'
 
 for i in range(20):

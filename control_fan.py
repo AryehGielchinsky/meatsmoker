@@ -27,7 +27,7 @@ if __name__ == "__main__":
     
     k={} # the PID variables
     k['p'] = 1/25
-    k['i'] = 1/100
+    k['i'] = 1/20
     k['d'] = -10
     
     dc = {} # duty cycle
@@ -42,16 +42,22 @@ if __name__ == "__main__":
         temp_data = read_data('recorded_data', smoke_session_id, connection)
         temp_data = temp_data[['date_time', 'temp0']].rename(columns={"temp0": "smoker_temp"})
         
-        temp_data = temp_data.tail(50) # this should be time based and the intergral should be longer and the deriv shorter
+        temp_data = temp_data[temp_data['date_time']> (temp_data['date_time'].max() - pd.Timedelta(minutes=10))]
+        temp_data_short = temp_data[temp_data['date_time']> (temp_data['date_time'].max() - pd.Timedelta(seconds=15))]
+        
+        # this should be time based and the intergral should be longer and the deriv shorter
         #print('curr_temp={}'.format(curr_temp))
         current_temp = temp_data.smoker_temp.iloc[-1]
         
         dc['p'] = k['p']*(desired_temp - current_temp) 
+        
+        # more of a wieghted avg than intergral. dividing by time makes it easier to think about the the constants
+        dc['i'] = k['i']                                                                                        \
+                * ( temp_data['date_time'].diff().dt.seconds * (desired_temp-temp_data['smoker_temp']) ).sum()  \
+                / temp_data['date_time'].diff().dt.seconds.sum()
     
-        dc['i'] = k['i'] * (desired_temp-temp_data['smoker_temp']).sum()/len(temp_data)
-    
-        dc['d'] = (k['d'] * temp_data['smoker_temp'].diff()
-                            /temp_data['date_time'].diff().dt.seconds).mean()
+        dc['d'] = (k['d'] * temp_data_short['smoker_temp'].diff()
+                            /temp_data_short['date_time'].diff().dt.seconds).mean()
     
         dc['total'] = dc['p'] + dc['i'] + dc['d']
         
