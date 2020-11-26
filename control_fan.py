@@ -5,6 +5,7 @@ from datetime import datetime as dt
 from my_functions import get_last_smoke_session_id, get_connection, read_data, hit_db
 import pandas as pd
 
+
 def write_data(smoke_session_id, curr_temp, desired_temp, dc, connection):
     local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
     sql = """insert into PWM (smoke_session_id, date_time, curr_temp, desired_temp, duty_cycle_p, duty_cycle_i, duty_cycle_d, duty_cycle)
@@ -12,6 +13,9 @@ def write_data(smoke_session_id, curr_temp, desired_temp, dc, connection):
              """.format(smoke_session_id, local_time, curr_temp, desired_temp, dc['p'], dc['i'], dc['d'], dc['total'])
     hit_db(sql, connection)
 
+
+def bound(val, low, high):
+    return max(low, min(high, val))
 
 
 if __name__ == "__main__":
@@ -58,13 +62,15 @@ if __name__ == "__main__":
     
         dc['d'] = k['d'] * (temp_data_short['smoker_temp'].diff()
                             /temp_data_short['date_time'].diff().dt.seconds).mean()
-    
+        
+        for key, value in dc.items():
+            dc[key] = bound(value, -3, 3) 
+        
         dc['total'] = dc['p'] + dc['i'] + dc['d']
         
         print('unmodded duty cycle valuea: {}'.format(dc))
     
-        dc['total'] = min(dc['total'], 1)
-        dc['total'] = max(dc['total'],0)
+        dc['total'] = bound(dc['total'], 0, 1)
         print('actual duty_cycle: {}'.format(dc['total']))
         print('Current temp={}'.format(current_temp))
         print('')
