@@ -28,7 +28,7 @@ if __name__ == "__main__":
     k={} # the PID variables
     k['p'] = 1/25
     k['i'] = 1/20
-    k['d'] = -10
+    k['d'] = -1
     
     dc = {} # duty cycle
     
@@ -56,7 +56,7 @@ if __name__ == "__main__":
                 * ( temp_data['date_time'].diff().dt.seconds * (desired_temp-temp_data['smoker_temp']) ).sum()  \
                 / temp_data['date_time'].diff().dt.seconds.sum()
     
-        dc['d'] = (k['d'] * temp_data_short['smoker_temp'].diff()
+        dc['d'] = k['d'] * (temp_data_short['smoker_temp'].diff()
                             /temp_data_short['date_time'].diff().dt.seconds).mean()
     
         dc['total'] = dc['p'] + dc['i'] + dc['d']
