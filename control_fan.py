@@ -3,7 +3,7 @@ from time import sleep
 from gpiozero.pins.pigpio import PiGPIOFactory
 from datetime import datetime as dt
 from my_functions import get_last_smoke_session_id, get_connection, read_data, hit_db
-
+import pandas as pd
 
 def write_data(smoke_session_id, curr_temp, desired_temp, dc, connection):
     local_time = dt.now().strftime('%Y-%m-%d %H:%M:%S')
