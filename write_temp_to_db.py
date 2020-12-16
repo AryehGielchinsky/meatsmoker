@@ -28,17 +28,18 @@ def get_resistance(temp_percent, r=46000):
 #Steinhart–Hart equation converts resistance to temperature
 def get_temp(R):
     # old thermistors
-     A = 0.6872188391*10**-3
-     B = 2.103627383*10**-4
-     C = 0.5449073998*10**-7
+    A = 0.6872188391*10**-3
+    B = 2.103627383*10**-4
+    C = 0.5449073998*10**-7
     
     # new thermistors
-#    A = 1.216527419*10**-3
-#    B = 1.337979364*10**-4
-#    C = 3.947291334*10**-7
+    # A = 1.216527419*10**-3
+    # B = 1.337979364*10**-4
+    # C = 3.947291334*10**-7
 
     T = (A +B*np.log(R)+C*(np.log(R)**3) )**-1
     T = T*(9/5) - 459.67
+    
     return(T)
 
 
