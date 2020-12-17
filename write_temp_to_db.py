@@ -89,7 +89,7 @@ def check_smoke_session(connection):
         write_new_ss(new_ss, connection)
         smoke_session_id = get_last_smoke_session_id(connection)
         
-    thermistor_version = input("Which thermistors are you using? (old/new")
+    thermistor_version = input("Which thermistors are you using? (old/new): ")
         
     return smoke_session_id, thermistor_version        
         
