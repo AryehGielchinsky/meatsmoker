@@ -26,16 +26,15 @@ def get_resistance(temp_percent, r=46000):
     return r*temp_percent/(1-temp_percent)
 
 #Steinhart–Hart equation converts resistance to temperature
-def get_temp(R):
-    # old thermistors
-    A = 0.6872188391*10**-3
-    B = 2.103627383*10**-4
-    C = 0.5449073998*10**-7
-    
-    # new thermistors
-    # A = 1.216527419*10**-3
-    # B = 1.337979364*10**-4
-    # C = 3.947291334*10**-7
+def get_temp(R, thermistor_version):
+    if thermistor_version == 'old':
+        A = 0.6872188391*10**-3
+        B = 2.103627383*10**-4
+        C = 0.5449073998*10**-7
+    elif thermistor_version == 'new':
+        A = 1.216527419*10**-3
+        B = 1.337979364*10**-4
+        C = 3.947291334*10**-7
 
     T = (A +B*np.log(R)+C*(np.log(R)**3) )**-1
     T = T*(9/5) - 459.67
@@ -90,7 +89,9 @@ def check_smoke_session(connection):
         write_new_ss(new_ss, connection)
         smoke_session_id = get_last_smoke_session_id(connection)
         
-    return smoke_session_id        
+    thermistor_version = input("Which thermistors are you using? (old/new")
+        
+    return smoke_session_id, thermistor_version        
         
 ########################################################################################
 
@@ -101,7 +102,7 @@ if __name__ == "__main__":
     adcs = {}  
     
     connection, login_info = get_connection()
-    smoke_session_id = check_smoke_session(connection)
+    smoke_session_id, thermistor_version = check_smoke_session(connection)
     
     while True:
     
@@ -111,7 +112,7 @@ if __name__ == "__main__":
         
         resistance = get_resistance(temp_percent = temp_percent)
         
-        temp = get_temp(R = resistance)
+        temp = get_temp(R=resistance, thermistor_version=thermistor_version)
         temp = temp.tolist()    
         temp = ['null' if (np.isnan(_)) else _ for _ in temp]
     
