@@ -108,7 +108,8 @@ if __name__ == "__main__":
     
         print('Start')
         
-        temp_percent = get_temp_percent()
+        # temp_percent = get_temp_percent()
+        temp_percent = get_adc_value()
         
         resistance = get_resistance(temp_percent = temp_percent)
         
